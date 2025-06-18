@@ -3,3 +3,7 @@
 @theme {
   --font-mont: "Montserrat", sans-serif;
 }
+html,
+body {
+  @apply bg-white dark:bg-black;
+}
