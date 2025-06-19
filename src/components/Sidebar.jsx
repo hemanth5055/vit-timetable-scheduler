@@ -30,10 +30,10 @@ export default function Sidebar({ setIsSidebarOpen }) {
         <div className="w-full flex gap-4 h-full">
           {/* Theory Section */}
           <div
-            className="w-1/2 flex flex-col gap-2 overflow-y-auto pr-1"
+            className="w-1/2 flex flex-col gap-2  pr-1 scrollbar-hidden overflow-y-scroll"
             style={{ height: "calc(100vh - 70px)" }}
           >
-            <h2 className="font-mont font-medium text-[13px] select-none dark:text-white">
+            <h2 className="font-mont font-medium text-[15px] select-none dark:text-white">
               Theory :
             </h2>
             {Object.keys(theoryData).map((sub) => (
@@ -43,10 +43,10 @@ export default function Sidebar({ setIsSidebarOpen }) {
 
           {/* Lab Section */}
           <div
-            className="w-1/2 flex flex-col gap-2 overflow-y-auto pr-1"
+            className="w-1/2 flex flex-col gap-2 scrollbar-hidden overflow-y-scroll pr-1"
             style={{ height: "calc(100vh - 70px)" }}
           >
-            <h2 className="font-mont font-medium text-[13px] select-none dark:text-white">
+            <h2 className="font-mont font-medium text-[15px] select-none dark:text-white">
               Lab :
             </h2>
             {Object.keys(labData).map((sub) => (

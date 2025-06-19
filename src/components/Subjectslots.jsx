@@ -48,7 +48,7 @@ export default function Subjectslots({ name, isLab }) {
               type="checkbox"
               onChange={() => handleCheckboxChange(slot)}
               checked={selectedSlots.includes(slot)}
-              className="w-5 h-5 appearance-none border border-gray-400 dark:border-gray-600 rounded bg-white dark:bg-gray-700 checked:bg-blue-400 transition-colors duration-200"
+              className="w-5 h-5 appearance-none border cursor-pointer border-gray-400 dark:border-gray-600 rounded bg-white dark:bg-gray-700 checked:bg-blue-400 transition-colors duration-200"
             />
             <h2 className="font-medium font-mont text-[15px] select-none dark:text-white">
               {slot}
