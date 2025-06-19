@@ -30,7 +30,7 @@ export default function Subjectslots({ name, isLab }) {
     <div className="w-full flex flex-col p-2 gap-4">
       {/* show-name-and-type */}
       <div className="w-full flex gap-2 items-center">
-        <h2 className="font-medium font-mont text-[18px] select-none dark:text-white">
+        <h2 className="font-medium font-mont text-[20px] select-none dark:text-white">
           {name}
         </h2>
         <div
@@ -50,7 +50,7 @@ export default function Subjectslots({ name, isLab }) {
               checked={selectedSlots.includes(slot)}
               className="w-5 h-5 appearance-none border border-gray-400 dark:border-gray-600 rounded bg-white dark:bg-gray-700 checked:bg-blue-400 transition-colors duration-200"
             />
-            <h2 className="font-medium font-mont text-[13px] select-none dark:text-white">
+            <h2 className="font-medium font-mont text-[15px] select-none dark:text-white">
               {slot}
             </h2>
           </div>

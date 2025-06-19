@@ -31,7 +31,7 @@ export default function Sidebar({ setIsSidebarOpen }) {
           {/* Theory Section */}
           <div
             className="w-1/2 flex flex-col gap-2 overflow-y-auto pr-1"
-            style={{ maxHeight: "100%" }}
+            style={{ height: "calc(100vh - 70px)" }}
           >
             <h2 className="font-mont font-medium text-[13px] select-none dark:text-white">
               Theory :
@@ -44,7 +44,7 @@ export default function Sidebar({ setIsSidebarOpen }) {
           {/* Lab Section */}
           <div
             className="w-1/2 flex flex-col gap-2 overflow-y-auto pr-1"
-            style={{ maxHeight: "100%" }}
+            style={{ height: "calc(100vh - 70px)" }}
           >
             <h2 className="font-mont font-medium text-[13px] select-none dark:text-white">
               Lab :

@@ -12,15 +12,15 @@ export default function Subjectconfig() {
   const { selectedSubjects, setMorning } = useContext(DataContext);
 
   return (
-    <div className="w-[65%] flex flex-col p-2 gap-2 overflow-y-scroll">
+    <div className="w-[65%] flex flex-col p-2 gap-2 scrollbar-hidden overflow-y-scroll">
       {/* select-morning-evening */}
       <div className="w-full p-2 flex gap-3 items-center">
-        <h2 className="font-medium font-mont text-[14px] select-none dark:text-white">
+        <h2 className="font-medium font-mont text-[16px] select-none dark:text-white">
           Theory :
         </h2>
         {/* radio buttons for morning and evening */}
         <div className="flex gap-3">
-          <label className="flex items-center gap-1 text-[13px] font-mont font-medium dark:text-white">
+          <label className="flex  items-center gap-1 text-[16px] font-mont font-medium dark:text-white">
             <input
               type="radio"
               name="theoryTime"
@@ -31,7 +31,7 @@ export default function Subjectconfig() {
             Morning
           </label>
 
-          <label className="flex items-center gap-1 text-[13px] font-mont font-medium dark:text-white">
+          <label className="flex items-center gap-1 text-[16px] font-mont font-medium dark:text-white">
             <input
               type="radio"
               name="theoryTime"

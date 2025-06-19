@@ -21,7 +21,7 @@ export default function AvailableSubjects({ name, isLab }) {
 
   return (
     <div className="relative w-full bg-white dark:bg-[#292929] flex justify-between items-center p-2 py-3 rounded-[8px]">
-      <h2 className="font-mont font-medium text-[13px] select-none dark:text-white">
+      <h2 className="font-mont font-medium text-[15px] select-none dark:text-white">
         {name}
       </h2>
 

@@ -41,7 +41,7 @@ export default function Selectedsubjects({ sidebar }) {
         </div>
       </div>
       {/* show-selected-subject */}
-      <div className="w-full flex flex-col h-full overflow-y-scroll gap-3">
+      <div className="w-full flex flex-col h-full scrollbar-hidden overflow-y-scroll gap-3">
         {/* subject-item */}
         {Object.keys(selectedSubjects).length > 0 ? (
           Object.entries(selectedSubjects).map(([key, value]) => (

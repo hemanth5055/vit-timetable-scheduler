@@ -1,6 +1,7 @@
 import { createContext, useState } from "react";
 import theoryData from "../data/theory.subjects";
 import labData from "../data/lab.subjects";
+import { theoryDataTimeTable, labDataTimeTable } from "../data/timetable";
 
 export const DataContext = createContext();
 
@@ -17,6 +18,8 @@ export const DataContextProvider = ({ children }) => {
         labData,
         morning,
         setMorning,
+        theoryDataTimeTable,
+        labDataTimeTable,
       }}
     >
       {children}

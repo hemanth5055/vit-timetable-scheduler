@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Selectedsubjects from "./components/Selectedsubjects";
 import Subjectconfig from "./components/Subjectconfig";
 import Sidebar from "./components/Sidebar";
+import Timetable from "./components/Timetable";
 
 export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -16,8 +17,12 @@ export default function App() {
         <Selectedsubjects sidebar={setIsSidebarOpen}></Selectedsubjects>
         <Subjectconfig></Subjectconfig>
       </div>
+      {/* find-combinations-button */}
+      <div className="w-full h-[80px] "></div>
       {/* Time-Table-Page */}
-      <div className="w-full"></div>
+      <div className="w-full">
+        <Timetable></Timetable>
+      </div>
 
       {/* sidebar */}
       {isSidebarOpen ? (
