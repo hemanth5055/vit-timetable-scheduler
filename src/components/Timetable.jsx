@@ -2,8 +2,12 @@ import React, { useContext } from "react";
 import { DataContext } from "../context/Datacontext";
 
 export default function Timetable() {
-  const { theoryDataTimeTable, labDataTimeTable, showOnTimetable } =
-    useContext(DataContext);
+  const {
+    theoryDataTimeTable,
+    labDataTimeTable,
+    showOnTimetable,
+    validCombinations,
+  } = useContext(DataContext);
 
   const weekdays = ["Tue", "Wed", "Thu", "Fri", "Sat"];
   const totalSlots = 12;
@@ -18,18 +22,20 @@ export default function Timetable() {
     "#e0f0d6", // sage
   ];
 
-  // Mapping each slot to subject info
+  // Create subject metadata map from the current combination
   const slotToMetaMap = {};
-  if (showOnTimetable?.combination && showOnTimetable?.subjectsOrder) {
-    showOnTimetable.combination.forEach((slotStr, index) => {
-      const bgColor = fixedColorPalette[index % fixedColorPalette.length];
-      const subjectObj = showOnTimetable.subjectsOrder[index];
-      const shortLabel = subjectObj.name.split("-")[0]; // e.g., CSE1005
-      const type = subjectObj.isLab ? "LAB" : "THEORY";
+  const currentCombination = validCombinations[showOnTimetable];
 
-      slotStr.split("+").forEach((part) => {
-        slotToMetaMap[part.toLowerCase()] = {
-          label: `${shortLabel} - ${type}`,
+  if (currentCombination?.combination && currentCombination?.subjectsOrder) {
+    currentCombination.combination.forEach((slotStr, index) => {
+      const bgColor = fixedColorPalette[index % fixedColorPalette.length];
+      const subject = currentCombination.subjectsOrder[index];
+      const shortCode = subject.name.split("-")[0];
+      const type = subject.isLab ? "LAB" : "THEORY";
+
+      slotStr.split("+").forEach((slot) => {
+        slotToMetaMap[slot.toLowerCase()] = {
+          label: `${shortCode} - ${type}`,
           color: bgColor,
         };
       });
@@ -45,26 +51,26 @@ export default function Timetable() {
   };
 
   return (
-    <div className="w-full h-screen overflow-auto bg-white dark:bg-[#121212] p-4">
-      <div className="grid grid-cols-[70px_repeat(12,minmax(100px,1fr))] w-full h-full gap-[3px] text-sm text-center font-mont rounded-md overflow-hidden">
-        {/* Header Row */}
-        <div className="bg-gray-100 dark:bg-[#1f1f1f] dark:text-gray-400 py-3 font-semibold sticky left-0 z-10">
+    <div className="w-full bg-white dark:bg-[#121212] p-4">
+      <div className="grid grid-cols-[70px_repeat(12,minmax(100px,1fr))] gap-[3px] text-sm font-mont rounded-md">
+        {/* Time Header */}
+        <div className="bg-gray-100 dark:bg-[#1f1f1f] dark:text-white text-center py-3 font-semibold sticky left-0 z-10">
           Day
         </div>
         {[...Array(totalSlots)].map((_, i) => {
-          const startMinutes = 8 * 60 + i * 60;
-          const endMinutes = startMinutes + 50;
+          const start = 8 * 60 + i * 60;
+          const end = start + 50;
           return (
             <div
               key={i}
-              className="bg-gray-100 dark:bg-[#1f1f1f] dark:text-gray-400 p-3 font-semibold"
+              className="bg-gray-100 dark:bg-[#1f1f1f] text-center dark:text-gray-400 p-3 font-semibold"
             >
-              {formatTime(startMinutes)} - {formatTime(endMinutes)}
+              {formatTime(start)} - {formatTime(end)}
             </div>
           );
         })}
 
-        {/* Time Rows */}
+        {/* Weekday Rows */}
         {weekdays.map((day, rowIndex) => {
           const theoryRow = theoryDataTimeTable[rowIndex] || [];
           const labRow = labDataTimeTable[rowIndex] || [];
@@ -79,40 +85,32 @@ export default function Timetable() {
                 const theorySlot = theoryRow[colIndex];
                 const labSlot = labRow[colIndex];
 
-                const allSlots = [
+                const slots = [
                   ...(Array.isArray(theorySlot) ? theorySlot : [theorySlot]),
                   ...(Array.isArray(labSlot) ? labSlot : [labSlot]),
                 ].filter(Boolean);
 
-                // Find if any slot is part of combination
-                const activeSlot = allSlots.find(
+                const activeSlot = slots.find(
                   (slot) => slotToMetaMap[slot?.toLowerCase()]
                 );
-                const slotMeta = activeSlot
+
+                const meta = activeSlot
                   ? slotToMetaMap[activeSlot.toLowerCase()]
                   : null;
 
                 return (
                   <div
                     key={colIndex}
-                    className={`text-black dark:text-white p-2 min-h-[60px] flex flex-col items-center justify-center border border-gray-200 dark:border-[#1f1f1f]`}
+                    className="min-h-[100px] flex items-center justify-center p-2 border  border-gray-200 dark:border-[#1f1f1f] text-black dark:text-white text-[13px] font-semibold text-center rounded-[5px]"
                     style={{
-                      backgroundColor: slotMeta ? slotMeta.color : "#ffffff10",
+                      backgroundColor: meta ? meta.color : "#ffffff10",
                     }}
                   >
-                    {slotMeta ? (
-                      <span className="text-[13px] font-semibold text-black">
-                        {slotMeta.label}
-                      </span>
+                    {/* {meta ? meta.label : slots.join(", ")} */}
+                    {meta ? (
+                      <h1 className="text-black">{meta.label}</h1>
                     ) : (
-                      allSlots.map((s, i) => (
-                        <span
-                          key={i}
-                          className="text-[12px] text-gray-500 font-medium font-mont dark:text-gray-400"
-                        >
-                          {s}
-                        </span>
-                      ))
+                      <h1>{slots.join(", ")}</h1>
                     )}
                   </div>
                 );
@@ -120,6 +118,23 @@ export default function Timetable() {
             </React.Fragment>
           );
         })}
+      </div>
+
+      <div className="w-full flex flex-wrap gap-2 my-6">
+        {currentCombination?.subjectsOrder.map((sub, index) => (
+          <div className="relative bg-[#ededed] dark:bg-[#292929] flex justify-between items-center p-4 rounded-[8px]">
+            <h2 className="font-mont font-medium text-[15px] select-none dark:text-white">
+              {sub.name.replace(/\s*-?\s*(lab|theory)$/i, "")} -{" "}
+              {currentCombination.combination[index]}
+            </h2>
+            {/* Lab or Theory Indicator */}
+            <div
+              className={`w-[15px] h-[2px] absolute bottom-0 ${
+                sub.isLab ? "bg-[#6DBF9A]" : "bg-[#6D72BF]"
+              }`}
+            ></div>
+          </div>
+        ))}
       </div>
     </div>
   );

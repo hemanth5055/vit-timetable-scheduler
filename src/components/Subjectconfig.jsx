@@ -14,11 +14,10 @@ export default function Subjectconfig() {
   return (
     <div className="w-[65%] flex flex-col p-2 gap-2 scrollbar-hidden overflow-y-scroll">
       {/* select-morning-evening */}
-      <div className="w-full p-2 flex gap-3 items-center">
+      {/* <div className="w-full p-2 flex gap-3 items-center">
         <h2 className="font-medium font-mont text-[16px] select-none dark:text-white">
           Theory :
         </h2>
-        {/* radio buttons for morning and evening */}
         <div className="flex gap-3">
           <label className="flex  items-center gap-1 text-[16px] font-mont font-medium dark:text-white">
             <input
@@ -42,7 +41,7 @@ export default function Subjectconfig() {
             Evening
           </label>
         </div>
-      </div>
+      </div> */}
 
       {/* show-subject-and-available-slots */}
       {Object.keys(selectedSubjects).length > 0

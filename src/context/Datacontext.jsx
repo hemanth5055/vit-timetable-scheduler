@@ -7,11 +7,10 @@ export const DataContext = createContext();
 
 export const DataContextProvider = ({ children }) => {
   const [selectedSubjects, setSelectedSubjects] = useState({});
-  const [morning, setMorning] = useState(true); // true → morning
+  const [morning, setMorning] = useState(true);
   const [validCombinations, setValidCombinations] = useState([]);
-  const [showOnTimetable, setShowOnTimetable] = useState({});
+  const [showOnTimetable, setShowOnTimetable] = useState(-1);
 
-  // Memoize the lab-to-theory mapping for better performance
   const labSlotToTheorySlotMap = useMemo(() => {
     const generateLabToTheoryMap = (theoryData, labData) => {
       const map = {};
@@ -31,9 +30,8 @@ export const DataContextProvider = ({ children }) => {
     };
 
     return generateLabToTheoryMap(theoryDataTimeTable, labDataTimeTable);
-  }, [theoryDataTimeTable, labDataTimeTable]);
+  }, []);
 
-  // Helper class for better structure
   class Subject {
     constructor(name, availableSlots = [], isLab = false) {
       this.name = name;
@@ -42,49 +40,41 @@ export const DataContextProvider = ({ children }) => {
     }
   }
 
-  // Improved clash detection with better logic separation
   const findClash = (newSlot, occupiedSlots, isLab) => {
     const newParts = newSlot.split("+");
     for (const occupied of occupiedSlots) {
       const occupiedParts = occupied.split("+");
-      // Theory-theory or theory-lab clash
+
       if (!isLab) {
         if (newParts.some((part) => occupiedParts.includes(part))) {
           return true;
         }
       } else {
-        // Check if the lab slot itself is already used (lab-lab clash)
         if (newParts.some((part) => occupiedParts.includes(part))) {
           return true;
         }
 
-        // Check lab slot's mapped theory parts
         for (const part of newParts) {
           const mapped = labSlotToTheorySlotMap[part];
           const mappedParts = Array.isArray(mapped) ? mapped : [mapped];
 
           for (const theorySlot of mappedParts) {
-            if (
-              occupiedParts.some((occupiedPart) => theorySlot === occupiedPart)
-            ) {
+            if (occupiedParts.includes(theorySlot)) {
               return true;
             }
           }
         }
       }
     }
-
     return false;
   };
 
-  // Recursive combination finder with better error handling
   const findRecCombinations = (
     subjectIndex,
     currentFilledSlots,
     allResults,
     subjects
   ) => {
-    // Base case: all subjects processed
     if (subjectIndex === subjects.length) {
       allResults.push([...currentFilledSlots]);
       return;
@@ -92,10 +82,8 @@ export const DataContextProvider = ({ children }) => {
 
     const currentSubject = subjects[subjectIndex];
 
-    // Try each available slot for the current subject
     for (const slot of currentSubject.availableSlots) {
       if (!findClash(slot, currentFilledSlots, currentSubject.isLab)) {
-        // No clash found, add this slot and recurse
         currentFilledSlots.push(slot);
         findRecCombinations(
           subjectIndex + 1,
@@ -103,35 +91,33 @@ export const DataContextProvider = ({ children }) => {
           allResults,
           subjects
         );
-        currentFilledSlots.pop(); // Backtrack
+        currentFilledSlots.pop();
       }
     }
   };
 
-  // Main function to find all valid combinations
   const findCombinations = () => {
     if (Object.keys(selectedSubjects).length === 0) {
       console.warn(
         "No subjects selected. Please select subjects and their slots."
       );
       setValidCombinations([]);
+
       return [];
     }
 
     try {
-      // Convert selected subjects to Subject instances
       const subjects = Object.entries(selectedSubjects)
         .map(
           ([name, config]) =>
             new Subject(name, config.slots || [], config.isLab || false)
         )
-        .filter((subject) => subject.availableSlots.length > 0) // Only include subjects with available slots
-        .sort((a, b) => a.isLab - b.isLab); // Sort: theory subjects first, then labs
+        .filter((subject) => subject.availableSlots.length > 0)
+        .sort((a, b) => a.isLab - b.isLab);
 
       if (subjects.length === 0) {
         console.warn("No subjects with available slots found.");
         setValidCombinations([]);
-
         return [];
       }
 
@@ -140,10 +126,15 @@ export const DataContextProvider = ({ children }) => {
 
       findRecCombinations(0, filledSlots, results, subjects);
 
-      console.log(`Found ${results.length} valid combinations:`, results);
-      setValidCombinations(results);
-      setShowOnTimetable({ combination: results[0], subjectsOrder: subjects });
-      return results;
+      const structured = results.map((combination) => ({
+        combination,
+        subjectsOrder: subjects,
+      }));
+
+      console.log(`Found ${structured.length} valid combinations`);
+      setValidCombinations(structured);
+      setShowOnTimetable(0);
+      return structured;
     } catch (error) {
       console.error("Error finding combinations:", error);
       setValidCombinations([]);
@@ -151,25 +142,37 @@ export const DataContextProvider = ({ children }) => {
     }
   };
 
+  const handleNext = () => {
+    setShowOnTimetable((prev) => (prev + 1) % validCombinations.length);
+  };
+
+  const handlePrev = () => {
+    setShowOnTimetable(
+      (prev) => (prev - 1 + validCombinations.length) % validCombinations.length
+    );
+  };
+
   return (
     <DataContext.Provider
       value={{
-        // State
+        // States
         selectedSubjects,
         setSelectedSubjects,
         morning,
         setMorning,
         validCombinations,
+        showOnTimetable,
+        setShowOnTimetable,
         // Data
         theoryData,
         labData,
         theoryDataTimeTable,
         labDataTimeTable,
         labSlotToTheorySlotMap,
-        // Core functions
+        // Methods
         findCombinations,
-        //timetable functions
-        showOnTimetable,
+        handleNext,
+        handlePrev,
       }}
     >
       {children}
