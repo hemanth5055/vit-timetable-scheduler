@@ -54,7 +54,7 @@ export default function Timetable() {
     <div className="w-full bg-white dark:bg-[#121212] p-4">
       <div className="grid grid-cols-[70px_repeat(12,minmax(100px,1fr))] gap-[3px] text-sm font-mont rounded-md">
         {/* Time Header */}
-        <div className="bg-gray-100 dark:bg-[#1f1f1f] dark:text-white text-center py-3 font-semibold sticky left-0 z-10">
+        <div className="bg-gray-100 select-none dark:bg-[#1f1f1f] dark:text-white text-center py-3 font-semibold sticky left-0 z-10">
           Day
         </div>
         {[...Array(totalSlots)].map((_, i) => {
@@ -108,7 +108,7 @@ export default function Timetable() {
                   >
                     {/* {meta ? meta.label : slots.join(", ")} */}
                     {meta ? (
-                      <h1 className="text-black">{meta.label}</h1>
+                      <h1 className="text-black">{meta.label}<br></br><span className="text-[11px]">{slots.join(", ")}</span></h1>
                     ) : (
                       <h1>{slots.join(", ")}</h1>
                     )}
@@ -124,7 +124,7 @@ export default function Timetable() {
         {currentCombination?.subjectsOrder.map((sub, index) => (
           <div className="relative bg-[#ededed] dark:bg-[#292929] flex justify-between items-center p-4 rounded-[8px]">
             <h2 className="font-mont font-medium text-[15px] select-none dark:text-white">
-              {sub.name.replace(/\s*-?\s*(lab|theory)$/i, "")} -{" "}
+              {sub.name.replace(/\s*-?\s*(lab|theory)$/i, "")} - {" "}
               {currentCombination.combination[index]}
             </h2>
             {/* Lab or Theory Indicator */}

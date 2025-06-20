@@ -26,6 +26,8 @@ export default function Subjectslots({ name, isLab }) {
     }));
   };
 
+  const handleSelectAll = () => {};
+
   return (
     <div className="w-full flex flex-col p-2 gap-4">
       {/* show-name-and-type */}
@@ -38,7 +40,9 @@ export default function Subjectslots({ name, isLab }) {
             isLab ? "bg-[#6DBF9A]" : "bg-[#6D72BF]"
           } rounded-full`}
         ></div>
+        
       </div>
+      
 
       {/* show-slots-with-checkbox */}
       <div className="w-full flex gap-4 flex-wrap items-center">
