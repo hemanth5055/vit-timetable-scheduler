@@ -1,4 +1,4 @@
-import { createContext, useState, useMemo } from "react";
+import { createContext, useState, useMemo, useEffect } from "react";
 import theoryData from "../data/theory.subjects";
 import labData from "../data/lab.subjects";
 import { theoryDataTimeTable, labDataTimeTable } from "../data/timetable";
@@ -10,6 +10,25 @@ export const DataContextProvider = ({ children }) => {
   const [morning, setMorning] = useState(true);
   const [validCombinations, setValidCombinations] = useState([]);
   const [showOnTimetable, setShowOnTimetable] = useState(-1);
+
+  useEffect(() => {
+    if (Object.keys(selectedSubjects).length > 0) {
+      localStorage.setItem("subjects", JSON.stringify(selectedSubjects));
+    }
+  }, [selectedSubjects]);
+
+  // Load from localStorage on component mount
+  useEffect(() => {
+    const subs = localStorage.getItem("subjects");
+    if (subs) {
+      try {
+        const parsedSubs = JSON.parse(subs);
+        setSelectedSubjects(parsedSubs);
+      } catch (error) {
+        console.error("Failed to parse subjects from localStorage:", error);
+      }
+    }
+  }, []);
 
   const labSlotToTheorySlotMap = useMemo(() => {
     const generateLabToTheoryMap = (theoryData, labData) => {
@@ -125,7 +144,7 @@ export const DataContextProvider = ({ children }) => {
       const filledSlots = [];
 
       findRecCombinations(0, filledSlots, results, subjects);
-
+      console.log(results);
       const structured = results.map((combination) => ({
         combination,
         subjectsOrder: subjects,

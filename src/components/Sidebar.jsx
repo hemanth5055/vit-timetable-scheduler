@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { IoAdd } from "react-icons/io5";
 import AvailableSubjects from "./AvailableSubjects";
 import { DataContext } from "../context/Datacontext";
