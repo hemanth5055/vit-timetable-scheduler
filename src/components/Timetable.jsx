@@ -13,12 +13,14 @@ export default function Timetable() {
   const totalSlots = 12;
 
   const fixedColorPalette = [
-    "#ffe0e0", // rose
     "#ddf4e4", // mint
     "#daf0ff", // sky blue
+    "#EBD6FB", // lavender
+    "#ffe0e0", // rose
     "#ede3ff", // lilac
     "#fff4d6", // sand
     "#ffe9d6", // peach
+    "#FFAAAA", // light red
     "#e0f0d6", // sage
   ];
 
@@ -52,7 +54,7 @@ export default function Timetable() {
 
   return (
     <div className="w-full bg-white dark:bg-[#121212] p-4">
-      <div className="grid grid-cols-[70px_repeat(12,minmax(100px,1fr))] gap-[3px] text-sm font-mont rounded-md">
+      <div className="grid grid-cols-[70px_repeat(12,minmax(100px,1fr))] max-sm:overflow-x-auto gap-[3px] text-sm font-mont rounded-md">
         {/* Time Header */}
         <div className="bg-gray-100 select-none dark:bg-[#1f1f1f] dark:text-white text-center py-3 font-semibold sticky left-0 z-10">
           Day
@@ -63,7 +65,7 @@ export default function Timetable() {
           return (
             <div
               key={i}
-              className="bg-gray-100 dark:bg-[#1f1f1f] text-center dark:text-gray-400 p-3 font-semibold"
+              className="bg-gray-100 select-none dark:bg-[#1f1f1f] text-center dark:text-gray-400 p-3 font-semibold"
             >
               {formatTime(start)} - {formatTime(end)}
             </div>
@@ -77,7 +79,7 @@ export default function Timetable() {
 
           return (
             <React.Fragment key={day}>
-              <div className="bg-gray-100 dark:bg-[#1f1f1f] text-black dark:text-white flex justify-center items-center py-3 font-semibold sticky left-0 z-10">
+              <div className="bg-gray-100 select-none dark:bg-[#1f1f1f] text-black dark:text-white flex justify-center items-center py-3 font-semibold sticky left-0 z-10">
                 {day}
               </div>
 
@@ -108,7 +110,11 @@ export default function Timetable() {
                   >
                     {/* {meta ? meta.label : slots.join(", ")} */}
                     {meta ? (
-                      <h1 className="text-black">{meta.label}<br></br><span className="text-[11px]">{slots.join(", ")}</span></h1>
+                      <h1 className="text-black">
+                        {meta.label}
+                        <br></br>
+                        <span className="text-[11px]">{slots.join(", ")}</span>
+                      </h1>
                     ) : (
                       <h1>{slots.join(", ")}</h1>
                     )}
@@ -124,7 +130,7 @@ export default function Timetable() {
         {currentCombination?.subjectsOrder.map((sub, index) => (
           <div className="relative bg-[#ededed] dark:bg-[#292929] flex justify-between items-center p-4 rounded-[8px]">
             <h2 className="font-mont font-medium text-[15px] select-none dark:text-white">
-              {sub.name.replace(/\s*-?\s*(lab|theory)$/i, "")} - {" "}
+              {sub.name.replace(/\s*-?\s*(lab|theory)$/i, "")} -{" "}
               {currentCombination.combination[index]}
             </h2>
             {/* Lab or Theory Indicator */}

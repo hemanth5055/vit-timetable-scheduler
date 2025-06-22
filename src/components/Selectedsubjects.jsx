@@ -6,7 +6,7 @@ import { DataContext } from "../context/Datacontext";
 export default function Selectedsubjects({ sidebar }) {
   const { selectedSubjects } = useContext(DataContext);
   return (
-    <div className="w-[30%] flex flex-col p-2 gap-4">
+    <div className="w-[30%] flex flex-col p-2 gap-4 max-sm:w-full">
       {/* menu-bar */}
       <div className="w-full flex justify-between items-center ">
         {/* add subject button */}

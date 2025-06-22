@@ -15,7 +15,7 @@ export default function Sidebar({ setIsSidebarOpen }) {
       ></div>
 
       {/* Sidebar */}
-      <div className="relative z-50 w-[70%] h-full bg-[#EDEDED] dark:bg-black p-4 shadow-lg flex flex-col">
+      <div className="relative z-50 w-[70%] h-full bg-[#EDEDED] dark:bg-black p-4 shadow-lg flex flex-col max-sm:w-[100%] ">
         {/* Close Button */}
         <div className="w-full flex justify-end mb-2">
           <div
