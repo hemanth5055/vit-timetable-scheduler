@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { DataContext } from "../context/Datacontext";
+import { Tooltip } from "react-tooltip";
 
 export default function Timetable() {
   const {
@@ -33,11 +34,13 @@ export default function Timetable() {
       const bgColor = fixedColorPalette[index % fixedColorPalette.length];
       const subject = currentCombination.subjectsOrder[index];
       const shortCode = subject.name.split("-")[0];
+      const subName = subject.name.split("-")[1];
       const type = subject.isLab ? "LAB" : "THEORY";
 
       slotStr.split("+").forEach((slot) => {
         slotToMetaMap[slot.toLowerCase()] = {
           label: `${shortCode} - ${type}`,
+          name: subName,
           color: bgColor,
         };
       });
@@ -54,6 +57,11 @@ export default function Timetable() {
 
   return (
     <div className="w-full bg-white dark:bg-[#121212] p-4">
+      <Tooltip
+        id="my-tooltip"
+        className="font-mont"
+        style={{ backgroundColor: "black" }}
+      />
       <div className="grid grid-cols-[70px_repeat(12,minmax(100px,1fr))] max-sm:overflow-x-auto gap-[3px] text-sm font-mont rounded-md">
         {/* Time Header */}
         <div className="bg-gray-100 select-none dark:bg-[#1f1f1f] dark:text-white text-center py-3 font-semibold sticky left-0 z-10">
@@ -99,7 +107,6 @@ export default function Timetable() {
                 const meta = activeSlot
                   ? slotToMetaMap[activeSlot.toLowerCase()]
                   : null;
-
                 return (
                   <div
                     key={colIndex}
@@ -110,7 +117,12 @@ export default function Timetable() {
                   >
                     {/* {meta ? meta.label : slots.join(", ")} */}
                     {meta ? (
-                      <h1 className="text-black">
+                      <h1
+                        className="text-black"
+                        data-tooltip-id="my-tooltip"
+                        data-tooltip-content={meta.name}
+                        data-tooltip-place="bottom"
+                      >
                         {meta.label}
                         <br></br>
                         <span className="text-[11px]">{slots.join(", ")}</span>
