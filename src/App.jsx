@@ -36,7 +36,7 @@ export default function App() {
           className=" flex items-center gap-2 right-2 bg-[#ededed] dark:bg-[#212121] p-2 px-3 rounded-b-[5px] top-0 cursor-pointer max-sm:hidden"
           onClick={() => setIsInstructionsOpen(true)}
         >
-          <h1 className="font-mont dark:text-gray-300 text-black font-medium">
+          <h1 className="font-mont text-[14px] dark:text-gray-300 text-black font-medium">
             How to Use
           </h1>
           <IoArrowBack
@@ -47,7 +47,7 @@ export default function App() {
 
         <div className="flex items-center gap-2 right-2 bg-[#ededed] dark:bg-[#212121] p-2 px-3 rounded-b-[5px] top-0 cursor-pointer max-sm:hidden">
           <FaGithub className="dark:text-gray-100 text-black" size={18} />
-          <h1 className="font-mont dark:text-gray-300 text-black font-medium">
+          <h1 className="font-mont text-[14px] dark:text-gray-300 text-black font-medium">
             Github
           </h1>
         </div>

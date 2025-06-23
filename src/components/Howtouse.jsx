@@ -35,7 +35,7 @@ export default function Howtouse({ setIsInstructionsOpen }) {
       />
 
       {/* Slider Content */}
-      <div className="z-50 flex items-center gap-3 relative">
+      <div className="z-50 flex items-center gap-3 relative max-sm:gap-2 ">
         {/* Close Button */}
         <button
           className="absolute top-[-50px] cursor-pointer right-[-20px] text-black dark:text-white  text-2xl"
@@ -53,12 +53,12 @@ export default function Howtouse({ setIsInstructionsOpen }) {
         </div>
 
         {/* Instruction Box */}
-        <div className="flex flex-col rounded-[10px] gap-4 items-center">
-          <div className="w-[830px] h-[400px]   flex items-center justify-center">
+        <div className="flex flex-col rounded-[10px] gap-4  items-center">
+          <div className="w-[830px] h-[400px] flex items-center justify-center">
             {/* Placeholder for visuals / steps */}
             <img
               src={imgs[activePage]}
-              className="w-full h-full rounded-[15px] select-none"
+              className="w-full h-full rounded-[15px]  select-none"
             ></img>
           </div>
           <div className="dark:text-white text-center">

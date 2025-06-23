@@ -27,14 +27,14 @@ export default function Selectedsubjects({ sidebar }) {
           {/* theory */}
           <div className="flex items-center gap-1">
             <div className="w-[20px] h-[20px] rounded-full bg-[#6D72BF]"></div>
-            <h2 className="font-medium font-mont text-[12px] select-none dark:text-white">
+            <h2 className="font-medium font-mont text-[14px] select-none dark:text-white">
               Theory
             </h2>
           </div>
           {/* lab */}
           <div className="flex items-center gap-1">
             <div className="w-[20px] h-[20px] rounded-full bg-[#6DBF9A]"></div>
-            <h2 className="font-medium font-mont text-[12px] select-none dark:text-white">
+            <h2 className="font-medium font-mont text-[14px] select-none dark:text-white">
               Lab
             </h2>
           </div>
