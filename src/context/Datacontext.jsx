@@ -1,16 +1,18 @@
 import { createContext, useState, useMemo, useEffect } from "react";
 import theoryData from "../data/theory.subjects";
 import labData from "../data/lab.subjects";
+import { toast } from "react-toastify";
 import { theoryDataTimeTable, labDataTimeTable } from "../data/timetable";
 
 export const DataContext = createContext();
 
 export const DataContextProvider = ({ children }) => {
   const [selectedSubjects, setSelectedSubjects] = useState({});
-  const [morning, setMorning] = useState(true);
+  // const [morning, setMorning] = useState(true);
   const [validCombinations, setValidCombinations] = useState([]);
   const [showOnTimetable, setShowOnTimetable] = useState(-1);
 
+  //update localstorage when selectedSubjects changes
   useEffect(() => {
     if (Object.keys(selectedSubjects).length > 0) {
       localStorage.setItem("subjects", JSON.stringify(selectedSubjects));
@@ -26,6 +28,9 @@ export const DataContextProvider = ({ children }) => {
         setSelectedSubjects(parsedSubs);
       } catch (error) {
         console.error("Failed to parse subjects from localStorage:", error);
+        toast.error(
+          "Failed to load subjects from localStorage. Please reset your selection."
+        );
       }
     }
   }, []);
@@ -115,17 +120,59 @@ export const DataContextProvider = ({ children }) => {
     }
   };
 
-  const findCombinations = () => {
-    if (Object.keys(selectedSubjects).length === 0) {
-      console.warn(
-        "No subjects selected. Please select subjects and their slots."
-      );
-      setValidCombinations([]);
+  // const findCombinations = () => {
+  //   console.log(Object.keys(selectedSubjects));
+  //   if (Object.keys(selectedSubjects).length === 0) {
+  //     toast.error("Please select at least one subject.");
+  //   }
+  //   try {
+  //     const subjects = Object.entries(selectedSubjects)
+  //       .map(
+  //         ([name, config]) =>
+  //           new Subject(name, config.slots || [], config.isLab || false)
+  //       )
+  //       .filter((subject) => subject.availableSlots.length > 0)
+  //       .sort((a, b) => a.isLab - b.isLab);
+  //     if (subjects.length === 0) {
+  //       console.warn("No subjects with available slots found.");
+  //       setValidCombinations([]);
+  //     }
+  //     const results = [];
+  //     const filledSlots = [];
+  //     findRecCombinations(0, filledSlots, results, subjects);
+  //     console.log("Valid combinations found:", results);
+  //     if (results.length == 0) {
+  //       toast.error("No valid combinations found.");
+  //       setValidCombinations([]);
+  //       return [];
+  //     }
+  //     const structured = results.map((combination) => ({
+  //       combination,
+  //       subjectsOrder: subjects,
+  //     }));
+  //     setValidCombinations(structured);
+  //     toast.success(`Found ${structured.length} valid combinations`);
+  //     setShowOnTimetable(0);
+  //     return structured;
+  //   } catch (error) {
+  //     console.error("Error finding combinations:", error);
+  //     toast.error("An error occurred while finding combinations.");
+  //     setValidCombinations([]);
+  //     return [];
+  //   }
+  // };
 
+  const findCombinations = () => {
+    console.log("Selected subjects:", Object.keys(selectedSubjects));
+
+    // Early validation
+    if (Object.keys(selectedSubjects).length === 0) {
+      toast.error("Please select at least one subject.");
       return [];
     }
 
     try {
+      // Create and filter subjects
       const subjects = Object.entries(selectedSubjects)
         .map(
           ([name, config]) =>
@@ -134,33 +181,62 @@ export const DataContextProvider = ({ children }) => {
         .filter((subject) => subject.availableSlots.length > 0)
         .sort((a, b) => a.isLab - b.isLab);
 
+      // Check if we have valid subjects
       if (subjects.length === 0) {
-        console.warn("No subjects with available slots found.");
+        const message = "Please select subjects with available time slots.";
+        console.warn(message);
+        toast.error(message);
         setValidCombinations([]);
         return [];
       }
 
+      // Find combinations using recursive algorithm
       const results = [];
       const filledSlots = [];
 
       findRecCombinations(0, filledSlots, results, subjects);
-      console.log(results);
-      const structured = results.map((combination) => ({
+
+      console.log(`Valid combinations found: ${results.length}`);
+
+      // Handle no results case
+      if (results.length === 0) {
+        toast.error(
+          "No valid timetable combinations found. Try adjusting your subject selections."
+        );
+        setValidCombinations([]);
+        return [];
+      }
+
+      // Structure the results
+      const structuredResults = results.map((combination) => ({
         combination,
         subjectsOrder: subjects,
       }));
 
-      console.log(`Found ${structured.length} valid combinations`);
-      setValidCombinations(structured);
+      // Batch state updates for better performance
+      setValidCombinations(structuredResults);
       setShowOnTimetable(0);
-      return structured;
+
+      toast.success(
+        `Found ${structuredResults.length} valid combination${
+          structuredResults.length === 1 ? "" : "s"
+        }`
+      );
+
+      return structuredResults;
     } catch (error) {
       console.error("Error finding combinations:", error);
+
+      // More specific error handling
+      const errorMessage =
+        error.message ||
+        "An unexpected error occurred while finding combinations.";
+      toast.error(errorMessage);
+
       setValidCombinations([]);
       return [];
     }
   };
-
   const handleNext = () => {
     setShowOnTimetable((prev) => (prev + 1) % validCombinations.length);
   };
@@ -177,8 +253,8 @@ export const DataContextProvider = ({ children }) => {
         // States
         selectedSubjects,
         setSelectedSubjects,
-        morning,
-        setMorning,
+        // morning,
+        // setMorning,
         validCombinations,
         showOnTimetable,
         setShowOnTimetable,
@@ -192,6 +268,7 @@ export const DataContextProvider = ({ children }) => {
         findCombinations,
         handleNext,
         handlePrev,
+        //notifications
       }}
     >
       {children}

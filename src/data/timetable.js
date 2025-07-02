@@ -50,11 +50,11 @@ export const theoryDataTimeTable = [
     "F1",
     ["TE1", "SD2"],
     "FREE",
-    "D2",
-    "TC2",
-    "A2",
-    "SF1",
-    "TG2",
+    "C2",
+    "TB2",
+    ["TAA2","G2"],
+    ["TE2","SD1"],
+    "TF2",
   ],
   // SATURDAY
   [
