@@ -28,6 +28,7 @@ export default function App() {
     showOnTimetable,
     validCombinations,
   } = useContext(DataContext);
+  let totalCredits = validCombinations.totalCredits || 0;
 
   return (
     <div className="w-full p-2 dark:bg-black relative pt-4">
@@ -91,8 +92,8 @@ export default function App() {
       </div>
       {/* Time-Table-Page */}
       <div className="w-full flex flex-col">
-        <div className="w-full flex items-center justify-between gap-2 px-4 mb-2">
-          <div className="w-full gap-2 items-center flex">
+        <div className="w-full flex justify-between items-center gap-2 px-4 mb-2">
+          <div className=" gap-2 items-center flex">
             <div
               className="w-[35px] h-[35px] bg-[#F3F4F6] text-black dark:bg-[#1b1a1a] dark:text-white flex justify-center items-center rounded-[5px] cursor-pointer"
               onClick={handlePrev}
@@ -106,12 +107,17 @@ export default function App() {
               <FaCaretLeft className="rotate-180" />
             </div>
           </div>
-          {validCombinations?.length > 0 ? (
-            <div className="font-mont dark:text-gray-400 right-0 font-medium select-none">
-              {showOnTimetable + 1}/{validCombinations.length}
+          <div className="font-mont  dark:text-gray-400  font-medium select-none">
+            Total credits : {totalCredits}
+          </div>
+          {validCombinations?.combinations?.length > 0 ? (
+            <div className="font-mont dark:text-gray-400 font-medium select-none">
+              {showOnTimetable + 1}/{validCombinations.combinations.length}
             </div>
           ) : (
-            ""
+            <div className="font-mont dark:text-gray-400 font-medium select-none">
+              0/0
+            </div>
           )}
         </div>
         <Timetable></Timetable>

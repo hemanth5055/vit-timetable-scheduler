@@ -27,16 +27,18 @@ export default function Timetable() {
 
   // Create subject metadata map from the current combination
   const slotToMetaMap = {};
-  const currentCombination = validCombinations[showOnTimetable];
 
-  if (currentCombination?.combination && currentCombination?.subjectsOrder) {
-    currentCombination.combination.forEach((slotStr, index) => {
+  // Fix: Access the correct structure
+  const currentCombination = validCombinations?.combinations?.[showOnTimetable];
+  const subjectsOrder = validCombinations?.subjectsOrder;
+
+  if (currentCombination && subjectsOrder) {
+    currentCombination.forEach((slotStr, index) => {
       const bgColor = fixedColorPalette[index % fixedColorPalette.length];
-      const subject = currentCombination.subjectsOrder[index];
+      const subject = subjectsOrder[index];
       const shortCode = subject.name.split("-")[0];
       const subName = subject.name.split("-")[1];
       const type = subject.isLab ? "LAB" : "THEORY";
-
       slotStr.split("+").forEach((slot) => {
         slotToMetaMap[slot.toLowerCase()] = {
           label: `${shortCode} - ${type}`,
@@ -110,12 +112,11 @@ export default function Timetable() {
                 return (
                   <div
                     key={colIndex}
-                    className="min-h-[100px] flex items-center justify-center p-2 border  border-gray-200 dark:border-[#1f1f1f] text-black dark:text-white text-[13px] font-semibold text-center rounded-[5px]"
+                    className="min-h-[100px] flex items-center justify-center p-2 border border-gray-200 dark:border-[#1f1f1f] text-black dark:text-white text-[13px] font-semibold text-center rounded-[5px]"
                     style={{
                       backgroundColor: meta ? meta.color : "#ffffff10",
                     }}
                   >
-                    {/* {meta ? meta.label : slots.join(", ")} */}
                     {meta ? (
                       <h1
                         className="text-black"
@@ -124,7 +125,7 @@ export default function Timetable() {
                         data-tooltip-place="bottom"
                       >
                         {meta.label}
-                        <br></br>
+                        <br />
                         <span className="text-[11px]">{slots.join(", ")}</span>
                       </h1>
                     ) : (
@@ -139,18 +140,21 @@ export default function Timetable() {
       </div>
 
       <div className="w-full flex flex-wrap gap-2 my-6">
-        {currentCombination?.subjectsOrder.map((sub, index) => (
-          <div className="relative bg-[#ededed] dark:bg-[#292929] flex justify-between items-center p-4 rounded-[8px]">
+        {subjectsOrder?.map((sub, index) => (
+          <div
+            key={index}
+            className="relative bg-[#ededed] dark:bg-[#292929] flex justify-between items-center p-4 rounded-[8px]"
+          >
             <h2 className="font-mont font-medium text-[15px] select-none dark:text-white">
               {sub.name.replace(/\s*-?\s*(lab|theory)$/i, "")} -{" "}
-              {currentCombination.combination[index]}
+              {currentCombination[index]}
             </h2>
             {/* Lab or Theory Indicator */}
             <div
               className={`w-[15px] h-[2px] absolute bottom-0 ${
                 sub.isLab ? "bg-[#6DBF9A]" : "bg-[#6D72BF]"
               }`}
-            ></div>
+            />
           </div>
         ))}
       </div>

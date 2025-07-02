@@ -10,7 +10,7 @@ export const DataContextProvider = ({ children }) => {
   const [selectedSubjects, setSelectedSubjects] = useState({});
   // const [morning, setMorning] = useState(true);
   const [validCombinations, setValidCombinations] = useState([]);
-  const [showOnTimetable, setShowOnTimetable] = useState(-1);
+  const [showOnTimetable, setShowOnTimetable] = useState(0);
 
   //update localstorage when selectedSubjects changes
   useEffect(() => {
@@ -161,6 +161,23 @@ export const DataContextProvider = ({ children }) => {
   //     return [];
   //   }
   // };
+  const calculateSlotCredits = (slotString) => {
+    const slots = slotString.split("+");
+
+    switch (slots.length) {
+      case 1:
+        // Single slot
+        return slots[0].length === 2 ? 2 : 1;
+
+      case 2:
+        // Two combined slots
+        return slots[0].startsWith("L") ? 2 : 3;
+
+      default:
+        // Multiple combined slots (3 or more)
+        return slots.length + 1;
+    }
+  };
 
   const findCombinations = () => {
     console.log("Selected subjects:", Object.keys(selectedSubjects));
@@ -207,19 +224,31 @@ export const DataContextProvider = ({ children }) => {
         return [];
       }
 
+      //finding the registered credits
+      let totalCredits = 0;
+      for (let i = 0; i < results[0].length; i++) {
+        totalCredits += calculateSlotCredits(results[0][i]);
+      }
       // Structure the results
-      const structuredResults = results.map((combination) => ({
-        combination,
+      // const structuredResults = results.map((combination) => ({
+      //   combination,
+      //   subjectsOrder: subjects,
+      //   totalCredits: totalCredits,
+      // }));
+      const structuredResults = {
+        combinations: results,
         subjectsOrder: subjects,
-      }));
+        totalCredits,
+      };
 
+      console.log(structuredResults);
       // Batch state updates for better performance
       setValidCombinations(structuredResults);
       setShowOnTimetable(0);
 
       toast.success(
-        `Found ${structuredResults.length} valid combination${
-          structuredResults.length === 1 ? "" : "s"
+        `Found ${results.length} valid combination${
+          results.length === 1 ? "" : "s"
         }`
       );
 
@@ -238,12 +267,16 @@ export const DataContextProvider = ({ children }) => {
     }
   };
   const handleNext = () => {
-    setShowOnTimetable((prev) => (prev + 1) % validCombinations.length);
+    setShowOnTimetable(
+      (prev) => (prev + 1) % validCombinations.combinations.length
+    );
   };
 
   const handlePrev = () => {
     setShowOnTimetable(
-      (prev) => (prev - 1 + validCombinations.length) % validCombinations.length
+      (prev) =>
+        (prev - 1 + validCombinations.combinations.length) %
+        validCombinations.combinations.length
     );
   };
 
