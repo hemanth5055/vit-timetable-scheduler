@@ -163,19 +163,15 @@ export const DataContextProvider = ({ children }) => {
   // };
   const calculateSlotCredits = (slotString) => {
     const slots = slotString.split("+");
-
     switch (slots.length) {
-      case 1:
-        // Single slot
-        return slots[0].length === 2 ? 2 : 1;
-
+      case 3:
+        return 4;
       case 2:
-        // Two combined slots
-        return slots[0].startsWith("L") ? 2 : 3;
-
-      default:
-        // Multiple combined slots (3 or more)
-        return slots.length + 1;
+        if (slots[0].includes("L")) return 1;
+        return 3;
+      case 1:
+        if (slots[0].length == 2) return 2;
+        return 1;
     }
   };
 
@@ -267,12 +263,14 @@ export const DataContextProvider = ({ children }) => {
     }
   };
   const handleNext = () => {
+    if (!validCombinations?.combinations?.length) return;
     setShowOnTimetable(
       (prev) => (prev + 1) % validCombinations.combinations.length
     );
   };
 
   const handlePrev = () => {
+    if (!validCombinations?.combinations?.length) return;
     setShowOnTimetable(
       (prev) =>
         (prev - 1 + validCombinations.combinations.length) %
