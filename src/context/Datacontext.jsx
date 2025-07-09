@@ -1,4 +1,4 @@
-import { createContext, useState, useMemo, useEffect } from "react";
+import { createContext, useState, useMemo, useEffect, useRef } from "react";
 import theoryData from "../data/theory.subjects";
 import labData from "../data/lab.subjects";
 import { toast } from "react-toastify";
@@ -8,6 +8,7 @@ export const DataContext = createContext();
 
 export const DataContextProvider = ({ children }) => {
   const [selectedSubjects, setSelectedSubjects] = useState({});
+  const timetableRef = useRef();
   // const [morning, setMorning] = useState(true);
   const [validCombinations, setValidCombinations] = useState([]);
   const [showOnTimetable, setShowOnTimetable] = useState(0);
@@ -175,7 +176,7 @@ export const DataContextProvider = ({ children }) => {
     }
   };
 
-  const findCombinations = () => {
+  const findCombinations = async () => {
     console.log("Selected subjects:", Object.keys(selectedSubjects));
 
     // Early validation
@@ -236,8 +237,6 @@ export const DataContextProvider = ({ children }) => {
         subjectsOrder: subjects,
         totalCredits,
       };
-
-      console.log(structuredResults);
       // Batch state updates for better performance
       setValidCombinations(structuredResults);
       setShowOnTimetable(0);
@@ -247,7 +246,10 @@ export const DataContextProvider = ({ children }) => {
           results.length === 1 ? "" : "s"
         }`
       );
-
+      setTimeout(() => {
+        timetableRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+      //scroll to bottom of website
       return structuredResults;
     } catch (error) {
       console.error("Error finding combinations:", error);
@@ -299,7 +301,8 @@ export const DataContextProvider = ({ children }) => {
         findCombinations,
         handleNext,
         handlePrev,
-        //notifications
+        //ref
+        timetableRef,
       }}
     >
       {children}

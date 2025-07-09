@@ -10,7 +10,8 @@ export const theoryDataTimeTable = [
     "FREE",
     "F2",
     "A2",
-    "B2"[("TC2", "G2")],
+    "B2",
+    ["TC2", "G2"],
     "TDD2",
   ],
   // WEDNESDAY

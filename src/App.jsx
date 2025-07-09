@@ -21,14 +21,30 @@ export default function App() {
       localStorage.setItem("hasVisited", "true"); // Mark as visited
     }
   }, []);
+
   const {
     findCombinations,
     handleNext,
     handlePrev,
     showOnTimetable,
     validCombinations,
+    timetableRef,
   } = useContext(DataContext);
   let totalCredits = validCombinations.totalCredits || 0;
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "ArrowRight") {
+        handleNext();
+      } else if (e.key === "ArrowLeft") {
+        handlePrev();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleNext, handlePrev]);
 
   return (
     <div className="w-full p-2 dark:bg-black relative pt-4">
@@ -65,12 +81,16 @@ export default function App() {
           />
         </div>
 
-        <div className="flex items-center gap-2 right-2 bg-[#ededed] dark:bg-[#212121] p-2 px-3 rounded-b-[5px] top-0 cursor-pointer max-sm:hidden">
+        <a
+          href="https://github.com/hemanth5055/vit-timetable-scheduler"
+          target="_blank"
+          className="flex items-center gap-2 right-2 bg-[#ededed] dark:bg-[#212121] p-2 px-3 rounded-b-[5px] top-0 cursor-pointer max-sm:hidden"
+        >
           <FaGithub className="dark:text-gray-100 text-black" size={18} />
           <h1 className="font-mont text-[14px] dark:text-gray-300 text-black font-medium">
             Github
           </h1>
-        </div>
+        </a>
       </div>
 
       {/* Hero-page-1 */}
@@ -91,7 +111,7 @@ export default function App() {
         </div>
       </div>
       {/* Time-Table-Page */}
-      <div className="w-full flex flex-col">
+      <div className="w-full flex flex-col" ref={timetableRef}>
         <div className="w-full flex justify-between items-center gap-2 px-4 mb-2">
           <div className=" gap-2 items-center flex">
             <div
