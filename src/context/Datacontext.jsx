@@ -1,7 +1,7 @@
 import { createContext, useState, useMemo, useEffect, useRef } from "react";
 import theoryData from "../data/theory.subjects";
 import labData from "../data/lab.subjects";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { theoryDataTimeTable, labDataTimeTable } from "../data/timetable";
 
 export const DataContext = createContext();
@@ -11,6 +11,7 @@ export const DataContextProvider = ({ children }) => {
   const timetableRef = useRef();
   // const [morning, setMorning] = useState(true);
   const [validCombinations, setValidCombinations] = useState([]);
+   const [searchTerm, setSearchTerm] = useState("");
   const [showOnTimetable, setShowOnTimetable] = useState(0);
 
   //update localstorage when selectedSubjects changes
@@ -303,6 +304,8 @@ export const DataContextProvider = ({ children }) => {
         handlePrev,
         //ref
         timetableRef,
+        //search
+        searchTerm, setSearchTerm
       }}
     >
       {children}

@@ -8,7 +8,7 @@ import { DataContext } from "./context/Datacontext";
 import { FaCaretLeft } from "react-icons/fa";
 import { FaGithub } from "react-icons/fa";
 import Howtouse from "./components/Howtouse";
-import { ToastContainer } from "react-toastify";
+import { Toaster } from "react-hot-toast";
 
 export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -49,7 +49,7 @@ export default function App() {
   return (
     <div className="w-full p-2 dark:bg-black relative pt-4">
       {/* github-link & How to use */}
-      <ToastContainer
+      {/* <ToastContainer
         position="top-right"
         autoClose={5000}
         toastStyle={{
@@ -66,7 +66,12 @@ export default function App() {
             ? "dark"
             : "light"
         }
-      ></ToastContainer>
+      ></ToastContainer> */}
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+        toastOptions={{ className: "font-mont" }}
+      ></Toaster>
       <div className="absolute flex items-center gap-2 right-2  top-0 cursor-pointer max-sm:hidden">
         <div
           className=" flex items-center gap-2 right-2 bg-[#ededed] dark:bg-[#212121] p-2 px-3 rounded-b-[5px] top-0 cursor-pointer max-sm:hidden"
