@@ -27,7 +27,7 @@ export default function Howtouse({ setIsInstructionsOpen }) {
     );
 
   return (
-    <div className="fixed inset-0 z-40 flex justify-center items-center">
+    <div className="fixed inset-0 z-40 flex justify-center items-center max-sm:p-1">
       {/* Backdrop */}
       <div
         className="absolute inset-0 backdrop-blur-sm bg-gray-100/40 dark:bg-gray-900/40"
@@ -38,7 +38,7 @@ export default function Howtouse({ setIsInstructionsOpen }) {
       <div className="z-50 flex items-center gap-3 relative max-sm:gap-2 ">
         {/* Close Button */}
         <button
-          className="absolute top-[-50px] cursor-pointer right-[-20px] text-black dark:text-white  text-2xl"
+          className="absolute top-[-50px] cursor-pointer right-[-20px] max-sm:right-[10px] text-black dark:text-white  text-2xl"
           onClick={() => setIsInstructionsOpen(false)}
         >
           <IoMdClose />
@@ -49,20 +49,20 @@ export default function Howtouse({ setIsInstructionsOpen }) {
           className="w-[40px] h-[40px] dark:bg-gray-800 bg-gray-300 rounded-full cursor-pointer flex justify-center items-center"
           onClick={handlePrev}
         >
-          <IoMdArrowDropleft size={30} className="dark:text-white" />
+          <IoMdArrowDropleft className="dark:text-white text-[30px] max-sm:text-[20px]" />
         </div>
 
         {/* Instruction Box */}
-        <div className="flex flex-col rounded-[10px] gap-4  items-center">
-          <div className="w-[830px] h-[400px] flex items-center justify-center">
+        <div className="flex flex-col rounded-[10px] gap-4  items-center ">
+          <div className="w-[830px] h-[400px]  max-sm:w-[250px]  max-sm:h-[150px] flex items-center justify-center">
             {/* Placeholder for visuals / steps */}
             <img
               src={imgs[activePage]}
-              className="w-full h-full rounded-[15px]  select-none"
+              className="w-full h-full rounded-[15px]  select-none max-sm:rounded-[5px]"
             ></img>
           </div>
           <div className="dark:text-white text-center">
-            <h1 className="font-mont text-[20px] select-none font-medium">
+            <h1 className="font-mont text-[20px] max-sm:text-[16px] select-none font-medium">
               {instructions[activePage]}
             </h1>
           </div>
@@ -73,7 +73,7 @@ export default function Howtouse({ setIsInstructionsOpen }) {
           className="w-[40px] h-[40px] dark:bg-gray-800 bg-gray-300 rounded-full rotate-180 cursor-pointer flex justify-center items-center"
           onClick={handleNext}
         >
-          <IoMdArrowDropleft size={30} className="dark:text-white" />
+          <IoMdArrowDropleft  className="dark:text-white text-[30px] max-sm:text-[20px]" />
         </div>
       </div>
     </div>
