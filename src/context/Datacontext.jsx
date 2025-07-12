@@ -9,12 +9,66 @@ export const DataContext = createContext();
 export const DataContextProvider = ({ children }) => {
   const [selectedSubjects, setSelectedSubjects] = useState({});
   const timetableRef = useRef();
-  // const [morning, setMorning] = useState(true);
   const [validCombinations, setValidCombinations] = useState([]);
-   const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [showOnTimetable, setShowOnTimetable] = useState(0);
 
-  //update localstorage when selectedSubjects changes
+  // Create a mapping of time slots to all slots that occur at the same time
+  const mutuallyExclusiveSlots = useMemo(() => {
+    const slotConflicts = {};
+    
+    // Process each time slot across both theory and lab data
+    for (let day = 0; day < Math.max(theoryDataTimeTable.length, labDataTimeTable.length); day++) {
+      for (let time = 0; time < Math.max(
+        theoryDataTimeTable[day]?.length || 0,
+        labDataTimeTable[day]?.length || 0
+      ); time++) {
+        const allSlotsAtThisTime = [];
+        
+        // Get theory slots at this time
+        if (theoryDataTimeTable[day] && theoryDataTimeTable[day][time]) {
+          const theorySlot = theoryDataTimeTable[day][time];
+          if (theorySlot !== "FREE") {
+            if (Array.isArray(theorySlot)) {
+              allSlotsAtThisTime.push(...theorySlot);
+            } else {
+              allSlotsAtThisTime.push(theorySlot);
+            }
+          }
+        }
+        
+        // Get lab slots at this time
+        if (labDataTimeTable[day] && labDataTimeTable[day][time]) {
+          const labSlot = labDataTimeTable[day][time];
+          if (labSlot !== "FREE") {
+            if (Array.isArray(labSlot)) {
+              allSlotsAtThisTime.push(...labSlot);
+            } else {
+              allSlotsAtThisTime.push(labSlot);
+            }
+          }
+        }
+        
+        // If there are multiple slots at this time, they're mutually exclusive
+        if (allSlotsAtThisTime.length > 1) {
+          allSlotsAtThisTime.forEach(slot => {
+            if (!slotConflicts[slot]) {
+              slotConflicts[slot] = [];
+            }
+            // Add all other slots at this time as conflicts
+            slotConflicts[slot] = [...new Set([
+              ...slotConflicts[slot],
+              ...allSlotsAtThisTime.filter(s => s !== slot)
+            ])];
+          });
+        }
+      }
+    }
+    
+    return slotConflicts;
+  }, []);
+
+  // Update localStorage when selectedSubjects changes
   useEffect(() => {
     if (Object.keys(selectedSubjects).length > 0) {
       localStorage.setItem("subjects", JSON.stringify(selectedSubjects));
@@ -68,27 +122,20 @@ export const DataContextProvider = ({ children }) => {
 
   const findClash = (newSlot, occupiedSlots, isLab) => {
     const newParts = newSlot.split("+");
+    
     for (const occupied of occupiedSlots) {
       const occupiedParts = occupied.split("+");
-
-      if (!isLab) {
-        if (newParts.some((part) => occupiedParts.includes(part))) {
+      
+      // Check direct slot conflicts
+      if (newParts.some((part) => occupiedParts.includes(part))) {
+        return true;
+      }
+      
+      // Check mutually exclusive slots (slots at same time)
+      for (const newPart of newParts) {
+        const mutuallyExclusiveWithNew = mutuallyExclusiveSlots[newPart] || [];
+        if (occupiedParts.some(occupiedPart => mutuallyExclusiveWithNew.includes(occupiedPart))) {
           return true;
-        }
-      } else {
-        if (newParts.some((part) => occupiedParts.includes(part))) {
-          return true;
-        }
-
-        for (const part of newParts) {
-          const mapped = labSlotToTheorySlotMap[part];
-          const mappedParts = Array.isArray(mapped) ? mapped : [mapped];
-
-          for (const theorySlot of mappedParts) {
-            if (occupiedParts.includes(theorySlot)) {
-              return true;
-            }
-          }
         }
       }
     }
@@ -109,6 +156,7 @@ export const DataContextProvider = ({ children }) => {
     const currentSubject = subjects[subjectIndex];
 
     for (const slot of currentSubject.availableSlots) {
+      console.log(slot);
       if (!findClash(slot, currentFilledSlots, currentSubject.isLab)) {
         currentFilledSlots.push(slot);
         findRecCombinations(
@@ -122,47 +170,6 @@ export const DataContextProvider = ({ children }) => {
     }
   };
 
-  // const findCombinations = () => {
-  //   console.log(Object.keys(selectedSubjects));
-  //   if (Object.keys(selectedSubjects).length === 0) {
-  //     toast.error("Please select at least one subject.");
-  //   }
-  //   try {
-  //     const subjects = Object.entries(selectedSubjects)
-  //       .map(
-  //         ([name, config]) =>
-  //           new Subject(name, config.slots || [], config.isLab || false)
-  //       )
-  //       .filter((subject) => subject.availableSlots.length > 0)
-  //       .sort((a, b) => a.isLab - b.isLab);
-  //     if (subjects.length === 0) {
-  //       console.warn("No subjects with available slots found.");
-  //       setValidCombinations([]);
-  //     }
-  //     const results = [];
-  //     const filledSlots = [];
-  //     findRecCombinations(0, filledSlots, results, subjects);
-  //     console.log("Valid combinations found:", results);
-  //     if (results.length == 0) {
-  //       toast.error("No valid combinations found.");
-  //       setValidCombinations([]);
-  //       return [];
-  //     }
-  //     const structured = results.map((combination) => ({
-  //       combination,
-  //       subjectsOrder: subjects,
-  //     }));
-  //     setValidCombinations(structured);
-  //     toast.success(`Found ${structured.length} valid combinations`);
-  //     setShowOnTimetable(0);
-  //     return structured;
-  //   } catch (error) {
-  //     console.error("Error finding combinations:", error);
-  //     toast.error("An error occurred while finding combinations.");
-  //     setValidCombinations([]);
-  //     return [];
-  //   }
-  // };
   const calculateSlotCredits = (slotString) => {
     const slots = slotString.split("+");
     switch (slots.length) {
@@ -222,22 +229,19 @@ export const DataContextProvider = ({ children }) => {
         return [];
       }
 
-      //finding the registered credits
+      // Calculate total credits
       let totalCredits = 0;
       for (let i = 0; i < results[0].length; i++) {
         totalCredits += calculateSlotCredits(results[0][i]);
       }
+
       // Structure the results
-      // const structuredResults = results.map((combination) => ({
-      //   combination,
-      //   subjectsOrder: subjects,
-      //   totalCredits: totalCredits,
-      // }));
       const structuredResults = {
         combinations: results,
         subjectsOrder: subjects,
         totalCredits,
       };
+
       // Batch state updates for better performance
       setValidCombinations(structuredResults);
       setShowOnTimetable(0);
@@ -247,10 +251,11 @@ export const DataContextProvider = ({ children }) => {
           results.length === 1 ? "" : "s"
         }`
       );
+      
       setTimeout(() => {
         timetableRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 100);
-      //scroll to bottom of website
+      
       return structuredResults;
     } catch (error) {
       console.error("Error finding combinations:", error);
@@ -265,6 +270,7 @@ export const DataContextProvider = ({ children }) => {
       return [];
     }
   };
+
   const handleNext = () => {
     if (!validCombinations?.combinations?.length) return;
     setShowOnTimetable(
@@ -287,8 +293,6 @@ export const DataContextProvider = ({ children }) => {
         // States
         selectedSubjects,
         setSelectedSubjects,
-        // morning,
-        // setMorning,
         validCombinations,
         showOnTimetable,
         setShowOnTimetable,
@@ -298,14 +302,16 @@ export const DataContextProvider = ({ children }) => {
         theoryDataTimeTable,
         labDataTimeTable,
         labSlotToTheorySlotMap,
+        mutuallyExclusiveSlots,
         // Methods
         findCombinations,
         handleNext,
         handlePrev,
-        //ref
+        // Ref
         timetableRef,
-        //search
-        searchTerm, setSearchTerm
+        // Search
+        searchTerm,
+        setSearchTerm
       }}
     >
       {children}

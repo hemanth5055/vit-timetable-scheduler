@@ -18,7 +18,7 @@ export default function Howtouse({ setIsInstructionsOpen }) {
     "Review the generated timetable displayed below.",
   ];
   const imgs = [step1, step2, step3, step4, step5];
-
+  
   const handleNext = () =>
     setActivePage((prev) => (prev + 1) % instructions.length);
   const handlePrev = () =>
